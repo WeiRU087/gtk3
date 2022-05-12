@@ -106,15 +106,19 @@ _gdk_broadway_display_open (const gchar *display_name)
   if (display_name == NULL)
     display_name = g_getenv ("BROADWAY_DISPLAY");
 
-  broadway_display->server = _gdk_broadway_server_new (display_name, &error);
-  if (broadway_display->server == NULL)
-    {
-      g_printerr ("Unable to init server: %s\n", error->message);
-      g_error_free (error);
-      return NULL;
-    }
+  // Do not connect with original broadwayd server
+  // mojo connection with streamer
 
-  g_signal_emit_by_name (display, "opened");
+  // broadway_display->server = _gdk_broadway_server_new (display_name, &error);
+  // if (broadway_display->server == NULL)
+  //   {
+  //     g_printerr ("Unable to init server: %s\n", error->message);
+  //     g_error_free (error);
+  //     return NULL;
+  //   }
+
+  // g_signal_emit_by_name (display, "opened");
+
 
   return display;
 }
@@ -148,7 +152,7 @@ gdk_broadway_display_sync (GdkDisplay *display)
 
   g_return_if_fail (GDK_IS_BROADWAY_DISPLAY (display));
 
-  _gdk_broadway_server_sync (broadway_display->server);
+  _gdk_broadway_server_sync ();
 }
 
 static void
@@ -158,7 +162,7 @@ gdk_broadway_display_flush (GdkDisplay *display)
 
   g_return_if_fail (GDK_IS_BROADWAY_DISPLAY (display));
 
-  _gdk_broadway_server_flush (broadway_display->server);
+  _gdk_broadway_server_flush ();
 }
 
 static gboolean
@@ -279,7 +283,7 @@ gdk_broadway_display_show_keyboard (GdkBroadwayDisplay *display)
 {
   g_return_if_fail (GDK_IS_BROADWAY_DISPLAY (display));
 
-  _gdk_broadway_server_set_show_keyboard (display->server, TRUE);
+  _gdk_broadway_server_set_show_keyboard (TRUE);
 }
 
 void
@@ -287,7 +291,7 @@ gdk_broadway_display_hide_keyboard (GdkBroadwayDisplay *display)
 {
   g_return_if_fail (GDK_IS_BROADWAY_DISPLAY (display));
 
-  _gdk_broadway_server_set_show_keyboard (display->server, FALSE);
+  _gdk_broadway_server_set_show_keyboard ( FALSE);
 }
 
 static int

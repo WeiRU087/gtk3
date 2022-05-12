@@ -124,7 +124,7 @@ update_dirty_windows_and_sync (void)
 	{
 	  impl->dirty = FALSE;
 	  updated_surface = TRUE;
-	  _gdk_broadway_server_window_update (display->server,
+	  _gdk_broadway_server_window_update (
 					      impl->id,
 					      impl->surface);
 	}
@@ -273,7 +273,7 @@ _gdk_broadway_display_create_window_impl (GdkDisplay    *display,
 
   impl = g_object_new (GDK_TYPE_WINDOW_IMPL_BROADWAY, NULL);
   window->impl = (GdkWindowImpl *)impl;
-  impl->id = _gdk_broadway_server_new_window (broadway_display->server,
+  impl->id = _gdk_broadway_server_new_window (
 					      window->x,
 					      window->y,
 					      window->width,
@@ -389,7 +389,7 @@ _gdk_broadway_window_destroy (GdkWindow *window,
   broadway_display = GDK_BROADWAY_DISPLAY (gdk_window_get_display (window));
   g_hash_table_remove (broadway_display->id_ht, GINT_TO_POINTER(impl->id));
 
-  _gdk_broadway_server_destroy_window (broadway_display->server,
+  _gdk_broadway_server_destroy_window (
 				       impl->id);
 }
 
@@ -429,8 +429,8 @@ gdk_window_broadway_show (GdkWindow *window, gboolean already_mapped)
   if (window->parent && window->parent->event_mask & GDK_SUBSTRUCTURE_MASK)
     _gdk_make_event (GDK_WINDOW (window), GDK_MAP, NULL, FALSE);
 
-  broadway_display = GDK_BROADWAY_DISPLAY (gdk_window_get_display (window));
-  if (_gdk_broadway_server_window_show (broadway_display->server, impl->id))
+  // broadway_display = GDK_BROADWAY_DISPLAY (gdk_window_get_display (window));
+  if (_gdk_broadway_server_window_show ( impl->id))
     queue_flush (window);
 
 }
@@ -453,9 +453,9 @@ gdk_window_broadway_hide (GdkWindow *window)
   broadway_display = GDK_BROADWAY_DISPLAY (gdk_window_get_display (window));
 
   _gdk_broadway_window_grab_check_unmap (window,
-					 _gdk_broadway_server_get_next_serial (broadway_display->server));
+					 _gdk_broadway_server_get_next_serial ());
 
-  if (_gdk_broadway_server_window_hide (broadway_display->server, impl->id))
+  if (_gdk_broadway_server_window_hide (impl->id))
     queue_flush (window);
 
   _gdk_window_clear_update_area (window);
@@ -506,7 +506,7 @@ gdk_window_broadway_move_resize (GdkWindow *window,
 	}
     }
 
-  _gdk_broadway_server_window_move_resize (broadway_display->server,
+  _gdk_broadway_server_window_move_resize (
 					   impl->id,
 					   with_move,
 					   x, y,
@@ -564,7 +564,7 @@ gdk_broadway_window_focus (GdkWindow *window,
 
   impl = GDK_WINDOW_IMPL_BROADWAY (window->impl);
   broadway_display = GDK_BROADWAY_DISPLAY (gdk_window_get_display (window));
-  _gdk_broadway_server_window_focus (broadway_display->server,
+  _gdk_broadway_server_window_focus (
 				     impl->id);
 }
 
@@ -652,7 +652,7 @@ gdk_broadway_window_set_transient_for (GdkWindow *window,
   impl->transient_for = parent_id;
 
   display = GDK_BROADWAY_DISPLAY (gdk_window_get_display (impl->wrapper));
-  _gdk_broadway_server_window_set_transient_for (display->server, impl->id, impl->transient_for);
+  _gdk_broadway_server_window_set_transient_for ( impl->id, impl->transient_for);
 }
 
 static void
@@ -1197,7 +1197,7 @@ moveresize_lookahead (GdkDisplay *display,
 
   broadway_display = GDK_BROADWAY_DISPLAY (display);
 
-  return !_gdk_broadway_server_lookahead_event (broadway_display->server, "mb");
+  return !_gdk_broadway_server_lookahead_event ( "mb");
 }
 
 gboolean
@@ -1541,7 +1541,7 @@ gdk_broadway_get_last_seen_time (GdkWindow  *window)
   GdkDisplay *display;
 
   display = gdk_window_get_display (window);
-  return _gdk_broadway_server_get_last_seen_time (GDK_BROADWAY_DISPLAY (display)->server);
+  return _gdk_broadway_server_get_last_seen_time ();
 }
 
 static void

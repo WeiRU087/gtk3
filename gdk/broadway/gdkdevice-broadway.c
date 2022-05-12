@@ -176,7 +176,7 @@ gdk_broadway_device_query_state (GdkDevice        *device,
       *root_window = gdk_screen_get_root_window (screen);
     }
 
-  _gdk_broadway_server_query_mouse (broadway_display->server,
+  _gdk_broadway_server_query_mouse (
 				    &mouse_toplevel_id,
 				    &device_root_x,
 				    &device_root_y,
@@ -291,7 +291,7 @@ gdk_broadway_device_grab (GdkDevice    *device,
   else
     {
       /* Device is a pointer */
-      return _gdk_broadway_server_grab_pointer (broadway_display->server,
+      return _gdk_broadway_server_grab_pointer (
 						GDK_WINDOW_IMPL_BROADWAY (window->impl)->id,
 						owner_events,
 						event_mask,
@@ -323,7 +323,7 @@ gdk_broadway_device_ungrab (GdkDevice *device,
   else
     {
       /* Device is a pointer */
-      serial = _gdk_broadway_server_ungrab_pointer (broadway_display->server, time_);
+      serial = _gdk_broadway_server_ungrab_pointer (time_);
 
       if (serial != 0)
 	{
