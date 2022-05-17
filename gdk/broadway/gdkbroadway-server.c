@@ -380,27 +380,31 @@ gdk_broadway_server_wait_for_reply (GdkBroadwayServer *server,
 void
 _gdk_broadway_server_flush (GdkBroadwayServer *server)
 {
-  BroadwayRequestFlush msg;
+  broadway_server_flush();
 
-  gdk_broadway_server_send_message(server, msg, BROADWAY_REQUEST_FLUSH);
+  // BroadwayRequestFlush msg;
+
+  // gdk_broadway_server_send_message(server, msg, BROADWAY_REQUEST_FLUSH);
 }
 
 void
 _gdk_broadway_server_sync (GdkBroadwayServer *server)
 {
-  BroadwayRequestSync msg;
-  guint32 serial;
-  BroadwayReply *reply;
+  broadway_server_flush();
 
-  serial = gdk_broadway_server_send_message (server, msg,
-					     BROADWAY_REQUEST_SYNC);
-  reply = gdk_broadway_server_wait_for_reply (server, serial);
+  // BroadwayRequestSync msg;
+  // guint32 serial;
+  // BroadwayReply *reply;
 
-  g_assert (reply->base.type == BROADWAY_REPLY_SYNC);
+  // serial = gdk_broadway_server_send_message (server, msg,
+	// 				     BROADWAY_REQUEST_SYNC);
+  // reply = gdk_broadway_server_wait_for_reply (server, serial);
 
-  g_free (reply);
+  // g_assert (reply->base.type == BROADWAY_REPLY_SYNC);
 
-  return;
+  // g_free (reply);
+
+  // return;
 }
 
 void
@@ -410,26 +414,28 @@ _gdk_broadway_server_query_mouse (GdkBroadwayServer *server,
 				  gint32             *root_y,
 				  guint32            *mask)
 {
-  BroadwayRequestQueryMouse msg;
-  guint32 serial;
-  BroadwayReply *reply;
+  broadway_server_query_mouse(&toplevel, &root_x, &root_y, &mask);
 
-  serial = gdk_broadway_server_send_message (server, msg,
-					     BROADWAY_REQUEST_QUERY_MOUSE);
-  reply = gdk_broadway_server_wait_for_reply (server, serial);
+  // BroadwayRequestQueryMouse msg;
+  // guint32 serial;
+  // BroadwayReply *reply;
 
-  g_assert (reply->base.type == BROADWAY_REPLY_QUERY_MOUSE);
+  // serial = gdk_broadway_server_send_message (server, msg,
+	// 				     BROADWAY_REQUEST_QUERY_MOUSE);
+  // reply = gdk_broadway_server_wait_for_reply (server, serial);
 
-  if (toplevel)
-    *toplevel = reply->query_mouse.toplevel;
-  if (root_x)
-    *root_x = reply->query_mouse.root_x;
-  if (root_y)
-    *root_y = reply->query_mouse.root_y;
-  if (mask)
-    *mask = reply->query_mouse.mask;
+  // g_assert (reply->base.type == BROADWAY_REPLY_QUERY_MOUSE);
+
+  // if (toplevel)
+  //   *toplevel = reply->query_mouse.toplevel;
+  // if (root_x)
+  //   *root_x = reply->query_mouse.root_x;
+  // if (root_y)
+  //   *root_y = reply->query_mouse.root_y;
+  // if (mask)
+  //   *mask = reply->query_mouse.mask;
   
-  g_free (reply);
+  // g_free (reply);
 }
 
 guint32
@@ -440,49 +446,50 @@ _gdk_broadway_server_new_window (GdkBroadwayServer *server,
 				 int height,
 				 gboolean is_temp)
 {
-  BroadwayRequestNewWindow msg;
-  guint32 serial, id;
-  BroadwayReply *reply;
+  return broadway_server_new_window(x, y, width, height, is_temp);
 
-  msg.x = x;
-  msg.y = y;
-  msg.width = width;
-  msg.height = height;
-  msg.is_temp = is_temp;
 
-  serial = gdk_broadway_server_send_message (server, msg,
-					     BROADWAY_REQUEST_NEW_WINDOW);
-  reply = gdk_broadway_server_wait_for_reply (server, serial);
+  // BroadwayRequestNewWindow msg;
+  // guint32 serial, id;
+  // BroadwayReply *reply;
 
-  g_assert (reply->base.type == BROADWAY_REPLY_NEW_WINDOW);
+  // serial = gdk_broadway_server_send_message (server, msg,
+	// 				     BROADWAY_REQUEST_NEW_WINDOW);
+  // reply = gdk_broadway_server_wait_for_reply (server, serial);
 
-  id = reply->new_window.id;
+  // serial = gdk_broadway_server_send_message (msg,
+	// 				     BROADWAY_REQUEST_NEW_WINDOW);
+  // reply = gdk_broadway_server_wait_for_reply (server, serial);
+
+  // g_assert (reply->base.type == BROADWAY_REPLY_NEW_WINDOW);
+
+  // id = reply->new_window.id;
   
-  g_free (reply);
+  // g_free (reply);
 
-  return id;
+  // return id;
 }
 
 void
 _gdk_broadway_server_destroy_window (GdkBroadwayServer *server,
 				     gint id)
 {
-  BroadwayRequestDestroyWindow msg;
+  broadway_server_destroy_window(id);
 
-  msg.id = id;
-  gdk_broadway_server_send_message (server, msg,
-				    BROADWAY_REQUEST_DESTROY_WINDOW);
+  // msg.id = id;
+  // gdk_broadway_server_send_message (server, msg,
+	// 			    BROADWAY_REQUEST_DESTROY_WINDOW);
 }
 
 gboolean
 _gdk_broadway_server_window_show (GdkBroadwayServer *server,
 				  gint id)
 {
-  BroadwayRequestShowWindow msg;
+  broadway_server_window_show(id);
 
-  msg.id = id;
-  gdk_broadway_server_send_message (server, msg,
-				    BROADWAY_REQUEST_SHOW_WINDOW);
+  // msg.id = id;
+  // gdk_broadway_server_send_message (server, msg,
+	// 			    BROADWAY_REQUEST_SHOW_WINDOW);
   
   return TRUE;
 }
@@ -491,11 +498,11 @@ gboolean
 _gdk_broadway_server_window_hide (GdkBroadwayServer *server,
 				  gint id)
 {
-  BroadwayRequestHideWindow msg;
+  broadway_server_window_hide(id);
 
-  msg.id = id;
-  gdk_broadway_server_send_message (server, msg,
-				    BROADWAY_REQUEST_HIDE_WINDOW);
+  // msg.id = id;
+  // gdk_broadway_server_send_message (server, msg,
+	// 			    BROADWAY_REQUEST_HIDE_WINDOW);
   
   return TRUE;
 }
@@ -504,23 +511,23 @@ void
 _gdk_broadway_server_window_focus (GdkBroadwayServer *server,
 				   gint id)
 {
-  BroadwayRequestFocusWindow msg;
+  broadway_server_focus_window(id);
 
-  msg.id = id;
-  gdk_broadway_server_send_message (server, msg,
-				    BROADWAY_REQUEST_FOCUS_WINDOW);
-}
+//   msg.id = id;
+//   gdk_broadway_server_send_message (server, msg,
+// 				    BROADWAY_REQUEST_FOCUS_WINDOW);
+// }
 
 void
 _gdk_broadway_server_window_set_transient_for (GdkBroadwayServer *server,
 					       gint id, gint parent)
 {
-  BroadwayRequestSetTransientFor msg;
+  broadway_server_window_set_transient_for (id, parent)
 
-  msg.id = id;
-  msg.parent = parent;
-  gdk_broadway_server_send_message (server, msg,
-				    BROADWAY_REQUEST_SET_TRANSIENT_FOR);
+  // msg.id = id;
+  // msg.parent = parent;
+  // gdk_broadway_server_send_message (server, msg,
+	// 			    BROADWAY_REQUEST_SET_TRANSIENT_FOR);
 }
 
 static void *
@@ -742,13 +749,16 @@ _gdk_broadway_server_window_update (GdkBroadwayServer *server,
   data = cairo_surface_get_user_data (surface, &gdk_broadway_shm_cairo_key);
   g_assert (data != NULL);
 
-  msg.id = id;
-  memcpy (msg.name, data->name, 36);
-  msg.width = cairo_image_surface_get_width (surface);
-  msg.height = cairo_image_surface_get_height (surface);
+  broadway_server_window_update (id, surface);
+  cairo_surface_destroy (surface);
 
-  gdk_broadway_server_send_message (server, msg,
-				    BROADWAY_REQUEST_UPDATE);
+  // msg.id = id;
+  // memcpy (msg.name, data->name, 36);
+  // msg.width = cairo_image_surface_get_width (surface);
+  // msg.height = cairo_image_surface_get_height (surface);
+
+  // gdk_broadway_server_send_message (server, msg,
+	// 			    BROADWAY_REQUEST_UPDATE);
 }
 
 gboolean
@@ -760,17 +770,12 @@ _gdk_broadway_server_window_move_resize (GdkBroadwayServer *server,
 					 int width,
 					 int height)
 {
-  BroadwayRequestMoveResize msg;
+  broadway_server_window_move_resize(id, with_move, x, y, width, height);
 
-  msg.id = id;
-  msg.with_move = with_move;
-  msg.x = x;
-  msg.y = y;
-  msg.width = width;
-  msg.height = height;
+  // BroadwayRequestMoveResize msg;
 
-  gdk_broadway_server_send_message (server, msg,
-				    BROADWAY_REQUEST_MOVE_RESIZE);
+  // gdk_broadway_server_send_message (server, msg,
+	// 			    BROADWAY_REQUEST_MOVE_RESIZE);
 
   return TRUE;
 }
@@ -782,58 +787,64 @@ _gdk_broadway_server_grab_pointer (GdkBroadwayServer *server,
 				   guint32 event_mask,
 				   guint32 time_)
 {
-  BroadwayRequestGrabPointer msg;
-  guint32 serial, status;
-  BroadwayReply *reply;
+  return broadway_server_grab_pointer(id, owner_events, event_mask, time_);
 
-  msg.id = id;
-  msg.owner_events = owner_events;
-  msg.event_mask = event_mask;
-  msg.time_ = time_;
+  // BroadwayRequestGrabPointer msg;
+  // guint32 serial, status;
+  // BroadwayReply *reply;
 
-  serial = gdk_broadway_server_send_message (server, msg,
-					     BROADWAY_REQUEST_GRAB_POINTER);
-  reply = gdk_broadway_server_wait_for_reply (server, serial);
+  // msg.id = id;
+  // msg.owner_events = owner_events;
+  // msg.event_mask = event_mask;
+  // msg.time_ = time_;
 
-  g_assert (reply->base.type == BROADWAY_REPLY_GRAB_POINTER);
+  // serial = gdk_broadway_server_send_message (server, msg,
+	// 				     BROADWAY_REQUEST_GRAB_POINTER);
+  // reply = gdk_broadway_server_wait_for_reply (server, serial);
 
-  status = reply->grab_pointer.status;
+  // g_assert (reply->base.type == BROADWAY_REPLY_GRAB_POINTER);
 
-  g_free (reply);
+  // status = reply->grab_pointer.status;
 
-  return status;
+  // g_free (reply);
+
+  // return status;
 }
 
 guint32
 _gdk_broadway_server_ungrab_pointer (GdkBroadwayServer *server,
 				     guint32    time_)
 {
-  BroadwayRequestUngrabPointer msg;
-  guint32 serial, status;
-  BroadwayReply *reply;
+  return broadway_server_ungrab_pointer(time_);
 
-  msg.time_ = time_;
+  // BroadwayRequestUngrabPointer msg;
+  // guint32 serial, status;
+  // BroadwayReply *reply;
 
-  serial = gdk_broadway_server_send_message (server, msg,
-					     BROADWAY_REQUEST_UNGRAB_POINTER);
-  reply = gdk_broadway_server_wait_for_reply (server, serial);
+  // msg.time_ = time_;
 
-  g_assert (reply->base.type == BROADWAY_REPLY_UNGRAB_POINTER);
+  // serial = gdk_broadway_server_send_message (server, msg,
+	// 				     BROADWAY_REQUEST_UNGRAB_POINTER);
+  // reply = gdk_broadway_server_wait_for_reply (server, serial);
 
-  status = reply->ungrab_pointer.status;
+  // g_assert (reply->base.type == BROADWAY_REPLY_UNGRAB_POINTER);
 
-  g_free (reply);
+  // status = reply->ungrab_pointer.status;
 
-  return status;
+  // g_free (reply);
+
+  // return status;
 }
 
 void
 _gdk_broadway_server_set_show_keyboard (GdkBroadwayServer *server,
                                         gboolean show)
 {
-  BroadwayRequestSetShowKeyboard msg;
+  broadway_server_set_show_keyboard(show);
 
-  msg.show_keyboard = show;
-  gdk_broadway_server_send_message (server, msg,
-				    BROADWAY_REQUEST_SET_SHOW_KEYBOARD);
-}
+  // BroadwayRequestSetShowKeyboard msg;
+
+//   msg.show_keyboard = show;
+//   gdk_broadway_server_send_message (server, msg,
+// 				    BROADWAY_REQUEST_SET_SHOW_KEYBOARD);
+// }

@@ -3,6 +3,7 @@
 
 #include <gdk/gdktypes.h>
 #include "broadway-protocol.h"
+#include "broadway-server-local.h"
 
 typedef struct _GdkBroadwayServer GdkBroadwayServer;
 typedef struct _GdkBroadwayServerClass GdkBroadwayServerClass;

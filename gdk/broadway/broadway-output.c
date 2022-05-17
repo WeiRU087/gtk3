@@ -49,6 +49,8 @@ broadway_output_send_cmd (BroadwayOutput *output,
   // FIXME: we should really emit these as a single write
   g_output_stream_write_all (output->out, header, p, NULL, NULL, NULL);
   g_output_stream_write_all (output->out, buf, count, NULL, NULL, NULL);
+
+  // TODO
 }
 
 void broadway_output_pong (BroadwayOutput *output)
@@ -310,6 +312,10 @@ broadway_output_put_buffer (BroadwayOutput *output,
   encoded = g_string_new ("");
   broadway_buffer_encode (buffer, prev_buffer, encoded);
 
+  // new encode method
+  // TODO
+
+
   compressor = g_zlib_compressor_new (G_ZLIB_COMPRESSOR_FORMAT_RAW, -1);
   out_mem = g_memory_output_stream_new_resizable ();
   out = g_converter_output_stream_new (out_mem, G_CONVERTER (compressor));
@@ -319,6 +325,9 @@ broadway_output_put_buffer (BroadwayOutput *output,
                                   NULL, NULL, NULL) ||
       !g_output_stream_close (out, NULL, NULL))
     g_warning ("compression failed");
+
+  // use rtc to web client for all the g_output_stream_write_all
+  // TODO
 
 
   len = g_memory_output_stream_get_data_size (G_MEMORY_OUTPUT_STREAM (out_mem));
