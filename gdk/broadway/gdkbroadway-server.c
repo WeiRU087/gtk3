@@ -185,41 +185,28 @@ static guint32
 gdk_broadway_server_send_message_with_size (BroadwayRequestBase *base,
 					    gsize size, guint32 type)
 {
-  // Use mojo send message to streamer
+  GOutputStream *out;
+  gsize written;
+
   base->size = size;
   base->type = type;
-  base->serial = next_serial++;
-  ugp::GdkIpcChannel::Get()->Gtk_Broadway_Send_Message(*base);
+  base->serial = server->next_serial++;
+
+  out = g_io_stream_get_output_stream (G_IO_STREAM (server->connection));
+
+  if (!g_output_stream_write_all (out, base, size, &written, NULL, NULL))
+    {
+      g_printerr ("Unable to write to server\n");
+      exit (1);
+    }
+
+  g_assert (written == size);
 
   return base->serial;
-
-
-
-  // GOutputStream *out;
-  // gsize written;
-
-  // base->size = size;
-  // base->type = type;
-  // base->serial = server->next_serial++;
-
-  // out = g_io_stream_get_output_stream (G_IO_STREAM (server->connection));
-
-  // if (!g_output_stream_write_all (out, base, size, &written, NULL, NULL))
-  //   {
-  //     g_printerr ("Unable to write to server\n");
-  //     exit (1);
-  //   }
-
-  // g_assert (written == size);
-
-  // return base->serial;
 }
 
-// #define gdk_broadway_server_send_message(_server, _msg, _type) \
-//   gdk_broadway_server_send_message_with_size(_server, (BroadwayRequestBase *)&_msg, sizeof (_msg), _type)
-
-#define gdk_broadway_server_send_message(_msg, type) \
-  gdk_broadway_server_send_message_with_size((BroadwayRequestBase *)&_msg, sizeof (_msg), _type)
+#define gdk_broadway_server_send_message(_server, _msg, _type) \
+  gdk_broadway_server_send_message_with_size(_server, (BroadwayRequestBase *)&_msg, sizeof (_msg), _type)
 
 static void
 parse_all_input (GdkBroadwayServer *server)
@@ -404,7 +391,8 @@ _gdk_broadway_server_flush ()
 {
   BroadwayRequestFlush msg;
 
-  gdk_broadway_server_send_message( msg, BROADWAY_REQUEST_FLUSH);
+  Gtk_Broadway_Send_Flush_Sync_QueryMouse(msg, BROADWAY_REQUEST_FLUSH);
+
 }
 
 void
@@ -414,13 +402,7 @@ _gdk_broadway_server_sync ()
   guint32 serial;
   BroadwayReply *reply;
 
-  serial = gdk_broadway_server_send_message ( msg,
-					     BROADWAY_REQUEST_SYNC);
-  reply = gdk_broadway_server_wait_for_reply (server, serial);
-
-  g_assert (reply->base.type == BROADWAY_REPLY_SYNC);
-
-  g_free (reply);
+ Gtk_Broadway_Send_Flush_Sync_QueryMouse(msg, BROADWAY_REQUEST_SYNC);
 
   return;
 }
@@ -436,8 +418,8 @@ _gdk_broadway_server_query_mouse (
   guint32 serial;
   BroadwayReply *reply;
 
-  serial = gdk_broadway_server_send_message ( msg,
-					     BROADWAY_REQUEST_QUERY_MOUSE);
+  serial =Gtk_Broadway_Send_Flush_Sync_QueryMouse(msg, BROADWAY_REQUEST_QUERY_MOUSE);
+
   reply = gdk_broadway_server_wait_for_reply (server, serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_QUERY_MOUSE);
@@ -472,8 +454,8 @@ _gdk_broadway_server_new_window (
   msg.height = height;
   msg.is_temp = is_temp;
 
-  serial = gdk_broadway_server_send_message (msg,
-					     BROADWAY_REQUEST_NEW_WINDOW);
+  serial =Gtk_Broadway_Send_New_Window(msg, BROADWAY_REQUEST_NEW_WINDOW);
+
   reply = gdk_broadway_server_wait_for_reply (server, serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_NEW_WINDOW);
@@ -491,8 +473,7 @@ _gdk_broadway_server_destroy_window (gint id)
   BroadwayRequestDestroyWindow msg;
 
   msg.id = id;
-  gdk_broadway_server_send_message ( msg,
-				    BROADWAY_REQUEST_DESTROY_WINDOW);
+ Gtk_Broadway_Send_Destroy_Show_Hide_Focus_Window(msg, BROADWAY_REQUEST_DESTROY_WINDOW);
 }
 
 gboolean
@@ -501,8 +482,7 @@ _gdk_broadway_server_window_show (gint id)
   BroadwayRequestShowWindow msg;
 
   msg.id = id;
-  gdk_broadway_server_send_message ( msg,
-				    BROADWAY_REQUEST_SHOW_WINDOW);
+ Gtk_Broadway_Send_Destroy_Show_Hide_Focus_Window(msg, BROADWAY_REQUEST_SHOW_WINDOW);
   
   return TRUE;
 }
@@ -513,8 +493,7 @@ _gdk_broadway_server_window_hide (gint id)
   BroadwayRequestHideWindow msg;
 
   msg.id = id;
-  gdk_broadway_server_send_message ( msg,
-				    BROADWAY_REQUEST_HIDE_WINDOW);
+ Gtk_Broadway_Send_Destroy_Show_Hide_Focus_Window(msg, BROADWAY_REQUEST_HIDE_WINDOW);
   
   return TRUE;
 }
@@ -525,8 +504,7 @@ _gdk_broadway_server_window_focus (gint id)
   BroadwayRequestFocusWindow msg;
 
   msg.id = id;
-  gdk_broadway_server_send_message (msg,
-				    BROADWAY_REQUEST_FOCUS_WINDOW);
+ Gtk_Broadway_Send_Destroy_Show_Hide_Focus_Window(msg, BROADWAY_REQUEST_FOCUS_WINDOW);
 }
 
 void
@@ -537,8 +515,7 @@ _gdk_broadway_server_window_set_transient_for (
 
   msg.id = id;
   msg.parent = parent;
-  gdk_broadway_server_send_message ( msg,
-				    BROADWAY_REQUEST_SET_TRANSIENT_FOR);
+ Gtk_Broadway_Send_Set_Transient_For(msg, BROADWAY_REQUEST_SET_TRANSIENT_FOR);
 }
 
 static void *
@@ -765,8 +742,8 @@ _gdk_broadway_server_window_update (
   msg.width = cairo_image_surface_get_width (surface);
   msg.height = cairo_image_surface_get_height (surface);
 
-  gdk_broadway_server_send_message ( msg,
-				    BROADWAY_REQUEST_UPDATE);
+ Gtk_Broadway_Send_Window_Update(msg, BROADWAY_REQUEST_UPDATE);
+
 }
 
 gboolean
@@ -787,8 +764,7 @@ _gdk_broadway_server_window_move_resize (
   msg.width = width;
   msg.height = height;
 
-  gdk_broadway_server_send_message (msg,
-				    BROADWAY_REQUEST_MOVE_RESIZE);
+ Gtk_Broadway_Send_Move_Resize(msg, BROADWAY_REQUEST_MOVE_RESIZE);
 
   return TRUE;
 }
@@ -809,8 +785,8 @@ _gdk_broadway_server_grab_pointer (
   msg.event_mask = event_mask;
   msg.time_ = time_;
 
-  serial = gdk_broadway_server_send_message ( msg,
-					     BROADWAY_REQUEST_GRAB_POINTER);
+  serial =Gtk_Broadway_Send_Grab_Pointer(msg, BROADWAY_REQUEST_GRAB_POINTER);
+
   reply = gdk_broadway_server_wait_for_reply (server, serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_GRAB_POINTER);
@@ -832,8 +808,8 @@ _gdk_broadway_server_ungrab_pointer (
 
   msg.time_ = time_;
 
-  serial = gdk_broadway_server_send_message ( msg,
-					     BROADWAY_REQUEST_UNGRAB_POINTER);
+  serial =Gtk_Broadway_Send_Ungrab_Pointer(msg, BROADWAY_REQUEST_UNGRAB_POINTER);
+
   reply = gdk_broadway_server_wait_for_reply (server, serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_UNGRAB_POINTER);
@@ -852,6 +828,5 @@ _gdk_broadway_server_set_show_keyboard (
   BroadwayRequestSetShowKeyboard msg;
 
   msg.show_keyboard = show;
-  gdk_broadway_server_send_message ( msg,
-				    BROADWAY_REQUEST_SET_SHOW_KEYBOARD);
+ Gtk_Broadway_Send_Set_Show_Keyboard(msg, BROADWAY_REQUEST_SET_SHOW_KEYBOARD);
 }
