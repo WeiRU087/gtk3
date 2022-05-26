@@ -20,51 +20,51 @@ void               _gdk_broadway_server_flush                    ();
 void               _gdk_broadway_server_sync                     ();
 gulong             _gdk_broadway_server_get_next_serial          ();
 guint32            _gdk_broadway_server_get_last_seen_time       ();
-gboolean           _gdk_broadway_server_lookahead_event          (,
+gboolean           _gdk_broadway_server_lookahead_event          (
 								  const char         *types);
-void               _gdk_broadway_server_query_mouse              (,
+void               _gdk_broadway_server_query_mouse              (
 								  guint32            *toplevel,
 								  gint32             *root_x,
 								  gint32             *root_y,
 								  guint32            *mask);
-GdkGrabStatus      _gdk_broadway_server_grab_pointer             (,
+GdkGrabStatus      _gdk_broadway_server_grab_pointer             (
 								  gint                id,
 								  gboolean            owner_events,
 								  guint32             event_mask,
 								  guint32             time_);
-guint32            _gdk_broadway_server_ungrab_pointer           (,
+guint32            _gdk_broadway_server_ungrab_pointer           (
 								  guint32             time_);
 gint32             _gdk_broadway_server_get_mouse_toplevel       ();
-guint32            _gdk_broadway_server_new_window               (,
+guint32            _gdk_broadway_server_new_window               (
 								  int                 x,
 								  int                 y,
 								  int                 width,
 								  int                 height,
 								  gboolean            is_temp);
-void               _gdk_broadway_server_destroy_window           (,
+void               _gdk_broadway_server_destroy_window           (
 								  gint                id);
-gboolean           _gdk_broadway_server_window_show              (,
+gboolean           _gdk_broadway_server_window_show              (
 								  gint                id);
-gboolean           _gdk_broadway_server_window_hide              (,
+gboolean           _gdk_broadway_server_window_hide              (
 								  gint                id);
-void               _gdk_broadway_server_window_focus             (,
+void               _gdk_broadway_server_window_focus             (
 								  gint                id);
-void               _gdk_broadway_server_window_set_transient_for (,
+void               _gdk_broadway_server_window_set_transient_for (
 								  gint                id,
 								  gint                parent);
-void               _gdk_broadway_server_set_show_keyboard        (,
+void               _gdk_broadway_server_set_show_keyboard        (
 								  gboolean            show_keyboard);
-gboolean           _gdk_broadway_server_window_translate         (,
+gboolean           _gdk_broadway_server_window_translate         (
 								  gint                id,
 								  cairo_region_t     *area,
 								  gint                dx,
 								  gint                dy);
 cairo_surface_t   *_gdk_broadway_server_create_surface           (int                 width,
 								  int                 height);
-void               _gdk_broadway_server_window_update            (,
+void               _gdk_broadway_server_window_update            (
 								  gint                id,
 								  cairo_surface_t    *surface);
-gboolean           _gdk_broadway_server_window_move_resize       (,
+gboolean           _gdk_broadway_server_window_move_resize       (
 								  gint                id,
 								  gboolean            with_move,
 								  int                 x,

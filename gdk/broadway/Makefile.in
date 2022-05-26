@@ -159,7 +159,7 @@ am_libgdk_broadway_la_OBJECTS = $(am__objects_1) gdkcursor-broadway.lo \
 	gdkmonitor-broadway.lo gdkproperty-broadway.lo \
 	gdkscreen-broadway.lo gdkselection-broadway.lo \
 	gdktestutils-broadway.lo gdkvisual-broadway.lo \
-	gdkwindow-broadway.lo gdkbroadway-server.lo
+	gdkwindow-broadway.lo gdkbroadway-server.lo gdk_ipc.lo
 libgdk_broadway_la_OBJECTS = $(am_libgdk_broadway_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -187,7 +187,8 @@ depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/broadway-buffer.Po \
 	./$(DEPDIR)/broadway-output.Po ./$(DEPDIR)/broadway-server.Po \
-	./$(DEPDIR)/broadwayd.Po ./$(DEPDIR)/gdkbroadway-server.Plo \
+	./$(DEPDIR)/broadwayd.Po ./$(DEPDIR)/gdk_ipc.Plo \
+	./$(DEPDIR)/gdkbroadway-server.Plo \
 	./$(DEPDIR)/gdkcursor-broadway.Plo \
 	./$(DEPDIR)/gdkdevice-broadway.Plo \
 	./$(DEPDIR)/gdkdevicemanager-broadway.Plo \
@@ -545,6 +546,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -649,7 +651,9 @@ libgdk_broadway_la_SOURCES = \
 	gdkwindow-broadway.h	\
 	gdkprivate-broadway.h   \
 	gdkbroadway-server.h	\
-	gdkbroadway-server.c
+	gdkbroadway-server.c	\
+	gdk_ipc.h				\
+	gdk_ipc.c
 
 @OS_UNIX_TRUE@libgdk_broadway_la_LIBADD = \
 @OS_UNIX_TRUE@	$(SHM_LIBS)         \
@@ -805,6 +809,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/broadway-output.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/broadway-server.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/broadwayd.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdk_ipc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdkbroadway-server.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdkcursor-broadway.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdkdevice-broadway.Plo@am__quote@ # am--include-marker
@@ -1040,6 +1045,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/broadway-output.Po
 	-rm -f ./$(DEPDIR)/broadway-server.Po
 	-rm -f ./$(DEPDIR)/broadwayd.Po
+	-rm -f ./$(DEPDIR)/gdk_ipc.Plo
 	-rm -f ./$(DEPDIR)/gdkbroadway-server.Plo
 	-rm -f ./$(DEPDIR)/gdkcursor-broadway.Plo
 	-rm -f ./$(DEPDIR)/gdkdevice-broadway.Plo
@@ -1106,6 +1112,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/broadway-output.Po
 	-rm -f ./$(DEPDIR)/broadway-server.Po
 	-rm -f ./$(DEPDIR)/broadwayd.Po
+	-rm -f ./$(DEPDIR)/gdk_ipc.Plo
 	-rm -f ./$(DEPDIR)/gdkbroadway-server.Plo
 	-rm -f ./$(DEPDIR)/gdkcursor-broadway.Plo
 	-rm -f ./$(DEPDIR)/gdkdevice-broadway.Plo

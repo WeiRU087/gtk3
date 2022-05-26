@@ -182,7 +182,7 @@ _gdk_broadway_server_get_last_seen_time ()
 }
 
 static guint32
-gdk_broadway_server_send_message_with_size (BroadwayRequestBase *base,
+gdk_broadway_server_send_message_with_size (GdkBroadwayServer *server, BroadwayRequestBase *base,
 					    gsize size, guint32 type)
 {
   GOutputStream *out;
@@ -360,7 +360,7 @@ input_available_cb (gpointer stream, gpointer user_data)
 }
 
 static BroadwayReply *
-gdk_broadway_server_wait_for_reply (GdkBroadwayServer *server,
+gdk_broadway_server_wait_for_reply (
 				    guint32 serial)
 {
   // TODO
@@ -369,20 +369,20 @@ gdk_broadway_server_wait_for_reply (GdkBroadwayServer *server,
 
   BroadwayReply *reply;
 
-  while (TRUE)
-    {
-      reply = find_response_by_serial (server, serial);
-      if (reply)
-	{
-	  server->incomming = g_list_remove (server->incomming, reply);
-	  break;
-	}
+  // while (TRUE)
+  //   {
+  //     reply = find_response_by_serial (server, serial);
+  //     if (reply)
+	// {
+	//   server->incomming = g_list_remove (server->incomming, reply);
+	//   break;
+	// }
 
-      read_some_input_blocking (server);
-      parse_all_input (server);
-    }
+  //     read_some_input_blocking (server);
+  //     parse_all_input (server);
+  //   }
 
-  queue_process_input_at_idle (server);
+  // queue_process_input_at_idle (server);
   return reply;
 }
 
@@ -420,7 +420,7 @@ _gdk_broadway_server_query_mouse (
 
   serial =Gtk_Broadway_Send_Flush_Sync_QueryMouse(msg, BROADWAY_REQUEST_QUERY_MOUSE);
 
-  reply = gdk_broadway_server_wait_for_reply (server, serial);
+  reply = gdk_broadway_server_wait_for_reply ( serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_QUERY_MOUSE);
 
@@ -456,7 +456,7 @@ _gdk_broadway_server_new_window (
 
   serial =Gtk_Broadway_Send_New_Window(msg, BROADWAY_REQUEST_NEW_WINDOW);
 
-  reply = gdk_broadway_server_wait_for_reply (server, serial);
+  reply = gdk_broadway_server_wait_for_reply (serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_NEW_WINDOW);
 
@@ -787,7 +787,7 @@ _gdk_broadway_server_grab_pointer (
 
   serial =Gtk_Broadway_Send_Grab_Pointer(msg, BROADWAY_REQUEST_GRAB_POINTER);
 
-  reply = gdk_broadway_server_wait_for_reply (server, serial);
+  reply = gdk_broadway_server_wait_for_reply (serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_GRAB_POINTER);
 
@@ -810,7 +810,7 @@ _gdk_broadway_server_ungrab_pointer (
 
   serial =Gtk_Broadway_Send_Ungrab_Pointer(msg, BROADWAY_REQUEST_UNGRAB_POINTER);
 
-  reply = gdk_broadway_server_wait_for_reply (server, serial);
+  reply = gdk_broadway_server_wait_for_reply ( serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_UNGRAB_POINTER);
 

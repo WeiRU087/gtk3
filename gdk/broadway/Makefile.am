@@ -79,7 +79,9 @@ libgdk_broadway_la_SOURCES =		\
 	gdkwindow-broadway.h	\
 	gdkprivate-broadway.h   \
 	gdkbroadway-server.h	\
-	gdkbroadway-server.c
+	gdkbroadway-server.c	\
+	gdk_ipc.h				\
+	gdk_ipc.c
 
 if OS_UNIX
 libgdk_broadway_la_LIBADD = \
