@@ -5,9 +5,9 @@
 
 
 
-int Gtk_Broadway_Send_Flush_Sync_QueryMouse(const BroadwayRequestFlush msg, BroadwayRequestType type);
+void Gtk_Broadway_Send_Flush_Sync_QueryMouse(const BroadwayRequestFlush msg, BroadwayRequestType type);
 
-int Gtk_Broadway_Send_New_Window(const BroadwayRequestNewWindow msg, BroadwayRequestType type);
+void Gtk_Broadway_Send_New_Window(const BroadwayRequestNewWindow msg, BroadwayRequestType type);
 
 void Gtk_Broadway_Send_Destroy_Show_Hide_Focus_Window(const BroadwayRequestDestroyWindow msg, BroadwayRequestType type);
 
@@ -23,6 +23,7 @@ int Gtk_Broadway_Send_Ungrab_Pointer(const BroadwayRequestUngrabPointer msg, Bro
 
 void Gtk_Broadway_Send_Set_Show_Keyboard(const BroadwayRequestSetShowKeyboard msg, BroadwayRequestType type);
 
+gboolean Gdk_Broadway_Peek_Reply(BroadwayReply* reply);
 
 
 

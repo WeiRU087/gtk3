@@ -386,6 +386,46 @@ gdk_broadway_server_wait_for_reply (
   return reply;
 }
 
+GList *all_reply;
+static void
+peek_all_reply() {
+  BroadwayReply reply;
+  Gdk_Broadway_Peek_Reply(&reply);
+
+  all_reply = g_list_append (all_reply, &reply);
+}
+
+static BroadwayReply *
+find_by_serial (guint32 serial) {
+  GList *l;
+
+  for (l = all_reply; l != NULL; l = l->next) {
+    BroadwayReply *reply = l->data;
+
+    if (reply->base.in_reply_to == serial) return reply;
+  }
+
+  return NULL;
+}
+
+static BroadwayReply *
+find_reply(guint32 serial) {
+  BroadwayReply *reply;
+
+  while(TRUE) {
+    reply = find_by_serial(serial);
+    
+    if (reply) {
+      all_reply = g_list_remove(all_reply, reply);
+      break;
+    }
+    
+    peek_all_reply();
+  }
+
+  return reply;
+}
+
 void
 _gdk_broadway_server_flush ()
 {
@@ -418,9 +458,11 @@ _gdk_broadway_server_query_mouse (
   guint32 serial;
   BroadwayReply *reply;
 
-  serial =Gtk_Broadway_Send_Flush_Sync_QueryMouse(msg, BROADWAY_REQUEST_QUERY_MOUSE);
+  msg.serial = next_serial++;
+  Gtk_Broadway_Send_Flush_Sync_QueryMouse(msg, BROADWAY_REQUEST_QUERY_MOUSE);
 
-  reply = gdk_broadway_server_wait_for_reply ( serial);
+  reply = find_reply (msg.serial);
+  // reply = gdk_broadway_server_wait_for_reply ( serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_QUERY_MOUSE);
 
@@ -453,16 +495,16 @@ _gdk_broadway_server_new_window (
   msg.width = width;
   msg.height = height;
   msg.is_temp = is_temp;
+  msg.base.serial = next_serial++;
 
-  serial =Gtk_Broadway_Send_New_Window(msg, BROADWAY_REQUEST_NEW_WINDOW);
+  Gtk_Broadway_Send_New_Window(msg, BROADWAY_REQUEST_NEW_WINDOW);
 
-  reply = gdk_broadway_server_wait_for_reply (serial);
-
+  reply = find_reply (msg.base.serial);
   g_assert (reply->base.type == BROADWAY_REPLY_NEW_WINDOW);
 
   id = reply->new_window.id;
   
-  g_free (reply);
+  // g_free (reply); TODO
 
   return id;
 }
@@ -784,10 +826,12 @@ _gdk_broadway_server_grab_pointer (
   msg.owner_events = owner_events;
   msg.event_mask = event_mask;
   msg.time_ = time_;
+  msg.base.serial = next_serial++;
 
   serial =Gtk_Broadway_Send_Grab_Pointer(msg, BROADWAY_REQUEST_GRAB_POINTER);
 
-  reply = gdk_broadway_server_wait_for_reply (serial);
+  reply = find_reply (msg.base.serial);
+  // reply = gdk_broadway_server_wait_for_reply (serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_GRAB_POINTER);
 
@@ -807,10 +851,12 @@ _gdk_broadway_server_ungrab_pointer (
   BroadwayReply *reply;
 
   msg.time_ = time_;
+  msg.base.serial = next_serial++;
 
   serial =Gtk_Broadway_Send_Ungrab_Pointer(msg, BROADWAY_REQUEST_UNGRAB_POINTER);
 
-  reply = gdk_broadway_server_wait_for_reply ( serial);
+  reply = find_reply (msg.base.serial);
+  // reply = gdk_broadway_server_wait_for_reply ( serial);
 
   g_assert (reply->base.type == BROADWAY_REPLY_UNGRAB_POINTER);
 
